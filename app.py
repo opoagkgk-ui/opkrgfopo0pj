@@ -1,10 +1,10 @@
 import os
 import psycopg2
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
-# ===== ДАННЫЕ ИЗ ПЕРЕМЕННЫХ ОКРУЖЕНИЯ (безопасно!) =====
+# ===== ДАННЫЕ ИЗ ПЕРЕМЕННЫХ ОКРУЖЕНИЯ =====
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_NAME = os.environ.get("DB_NAME")
@@ -29,6 +29,27 @@ def get_assets(user_id):
     conn.close()
     return [{"symbol": r[0], "balance": r[1], "address": r[2], "price": r[3], "name": r[4], "icon": r[5]} for r in rows]
 
+def get_user_by_username(username):
+    """Ищет пользователя по username (без @) в базе данных"""
+    username = username.replace('@', '').strip().lower()
+    conn = get_db()
+    cur = conn.cursor()
+    # В базе у нас нет прямого поля username, но мы можем искать по адресам или другим полям
+    # Пока ищем по всем активам и возвращаем первый найденный user_id
+    cur.execute("SELECT DISTINCT user_id FROM assets")
+    users = cur.fetchall()
+    conn.close()
+    
+    # Для демо-режима: пробуем найти пользователя по username в адресах
+    # Это упрощённый вариант, в реальности нужно хранить username в отдельной таблице
+    for user in users:
+        user_id = user[0]
+        assets = get_assets(user_id)
+        for a in assets:
+            if username in a['address'].lower():
+                return user_id
+    return None
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -41,6 +62,15 @@ def get_balance(user_id):
         "total_usd": total_usd,
         "assets": assets
     })
+
+@app.route('/api/get_user_id/<username>')
+def get_user_id(username):
+    """Возвращает user_id по username"""
+    user_id = get_user_by_username(username)
+    if user_id:
+        return jsonify({"user_id": user_id})
+    else:
+        return jsonify({"error": "User not found"}), 404
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
