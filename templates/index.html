@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>larpwallet</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -14,72 +14,186 @@
             min-height: 100vh;
         }
         .container { max-width: 420px; margin: 0 auto; }
-        .header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+
+        /* ===== АНИМАЦИИ ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.05); }
+            50% { box-shadow: 0 0 40px rgba(255,255,255,0.15); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease-out;
+        }
         .header .logo {
             width: 36px; height: 36px;
             background: linear-gradient(135deg, #3a3a3c, #1c1c1e);
             border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
             font-size: 18px; border: 1px solid #2c2c2e;
+            animation: float 3s ease-in-out infinite;
         }
         .header h1 { font-size: 22px; font-weight: 700; }
+        .header .badge {
+            font-size: 9px;
+            background: #1c1c1e;
+            color: #636366;
+            padding: 2px 8px;
+            border-radius: 30px;
+            border: 1px solid #242426;
+            margin-left: 6px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
         .balance-card {
             background: #141414;
             padding: 20px;
             border-radius: 20px;
             border: 1px solid #242426;
             margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease-out, glow 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
         }
-        .balance-card .label { color: #8e8e93; font-size: 13px; text-transform: uppercase; }
-        .balance-card .total { font-size: 36px; font-weight: 700; margin-top: 4px; }
-        .balance-card .usdt { color: #636366; font-size: 14px; margin-top: 4px; }
-        .assets-title { color: #8e8e93; font-size: 13px; margin-bottom: 12px; text-transform: uppercase; }
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+            animation: pulse 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .balance-card .label { color: #8e8e93; font-size: 13px; text-transform: uppercase; position: relative; z-index: 1; }
+        .balance-card .total { font-size: 36px; font-weight: 700; margin-top: 4px; position: relative; z-index: 1; animation: bounceIn 1s ease-out; }
+        .balance-card .total .currency { font-size: 18px; color: #8e8e93; font-weight: 500; margin-left: 4px; }
+        .balance-card .usdt { color: #636366; font-size: 14px; margin-top: 4px; position: relative; z-index: 1; }
+
+        .assets-title { color: #8e8e93; font-size: 13px; margin-bottom: 12px; text-transform: uppercase; animation: fadeInUp 1s ease-out; }
+
         .asset-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px 0; border-bottom: 1px solid #1c1c1e;
+            animation: slideInLeft 0.5s ease-out forwards;
+            opacity: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-radius: 8px;
+            padding-left: 6px;
+            padding-right: 6px;
         }
+        .asset-item:hover { background: #141416; transform: translateX(4px); border-bottom-color: #2c2c2e; }
+        .asset-item:active { transform: scale(0.98); }
+        .asset-item:nth-child(1) { animation-delay: 0.1s; }
+        .asset-item:nth-child(2) { animation-delay: 0.15s; }
+        .asset-item:nth-child(3) { animation-delay: 0.2s; }
+        .asset-item:nth-child(4) { animation-delay: 0.25s; }
+        .asset-item:nth-child(5) { animation-delay: 0.3s; }
+        .asset-item:nth-child(6) { animation-delay: 0.35s; }
+        .asset-item:nth-child(7) { animation-delay: 0.4s; }
+        .asset-item:nth-child(8) { animation-delay: 0.45s; }
+        .asset-item:nth-child(9) { animation-delay: 0.5s; }
+        .asset-item:nth-child(10) { animation-delay: 0.55s; }
+        .asset-item:nth-child(11) { animation-delay: 0.6s; }
+        .asset-item:nth-child(12) { animation-delay: 0.65s; }
+
         .asset-item .left { display: flex; align-items: center; gap: 10px; }
         .asset-item .icon {
             width: 36px; height: 36px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 16px; font-weight: 700;
             background: #1c1c1e; border: 1px solid #2a2a2c;
+            transition: all 0.3s ease;
         }
+        .asset-item .icon:hover { transform: scale(1.15) rotate(10deg); }
+        .asset-item .icon.btc { color: #f7931a; background: #1a150e; }
+        .asset-item .icon.eth { color: #8b8cf7; background: #111125; }
+        .asset-item .icon.usdt { color: #26a17b; background: #0e1a16; }
+        .asset-item .icon.ton { color: #0098ea; background: #0e1820; }
+        .asset-item .icon.sol { color: #9945ff; background: #150e25; }
+        .asset-item .icon.xrp { color: #00aae4; background: #0e1820; }
+        .asset-item .icon.ada { color: #0033ad; background: #0e0e1a; }
+        .asset-item .icon.doge { color: #c2a633; background: #1a160e; }
+        .asset-item .icon.dot { color: #e6007a; background: #1a0e16; }
+        .asset-item .icon.matic { color: #8247e5; background: #140e1a; }
+        .asset-item .icon.avax { color: #e84142; background: #1a0e0e; }
+        .asset-item .icon.ltc { color: #a6a9aa; background: #141516; }
+
         .asset-item .name { font-weight: 600; }
         .asset-item .symbol { color: #636366; font-size: 12px; }
-        .asset-item .address {
-            font-family: monospace; font-size: 10px; color: #636366;
-            word-break: break-all; max-width: 140px;
-        }
+        .asset-item .address { font-family: monospace; font-size: 10px; color: #636366; word-break: break-all; max-width: 140px; }
         .asset-item .right { text-align: right; }
         .asset-item .balance { font-weight: 600; }
         .asset-item .value { color: #8e8e93; font-size: 12px; }
+
         .btn {
             background: #2c2c2e; border: none; color: white;
             padding: 14px; border-radius: 14px; width: 100%;
             font-size: 16px; font-weight: 600; cursor: pointer;
-            margin-top: 12px; transition: background 0.2s;
+            margin-top: 12px; transition: all 0.3s ease;
         }
-        .btn:hover { background: #3a3a3c; }
-        .loading { color: #636366; text-align: center; padding: 40px 0; }
-        .error { color: #ff3b30; text-align: center; padding: 40px 0; }
-        .user-id { 
-            color: #636366; 
-            font-size: 12px; 
-            text-align: center; 
+        .btn:hover { background: #3a3a3c; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,255,255,0.1); }
+        .btn:active { transform: scale(0.96); }
+
+        .loading { color: #636366; text-align: center; padding: 40px 0; animation: pulse 1.5s ease-in-out infinite; }
+        .error { color: #ff3b30; text-align: center; padding: 40px 0; animation: fadeInUp 0.5s ease-out; }
+
+        .user-id {
+            color: #636366;
+            font-size: 12px;
+            text-align: center;
             margin-top: 16px;
             padding: 8px;
             background: #141414;
             border-radius: 8px;
             border: 1px solid #242426;
+            animation: fadeInUp 1.2s ease-out;
         }
+        .mode-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .mode-badge.telegram { background: #1a3a5c; color: #4da6ff; }
+        .mode-badge.browser { background: #2c2c1a; color: #ffd700; }
+        .mode-badge.error { background: #3a1a1a; color: #ff4444; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="logo">⛓</div>
-            <h1>larpwallet</h1>
+            <h1>larpwallet <span class="badge">larp</span></h1>
         </div>
 
         <div class="balance-card">
@@ -88,100 +202,192 @@
             <div class="usdt" id="usdt">≈ 0.00 USDT</div>
         </div>
 
-        <div class="assets-title">Assets</div>
+        <div class="assets-title">📦 Assets</div>
         <div id="assetsList">
-            <div class="loading">Loading assets...</div>
+            <div class="loading">Загрузка данных...</div>
         </div>
 
         <button class="btn" onclick="loadData()">🔄 Refresh</button>
         
-        <div class="user-id" id="userIdDisplay">👤 User ID: loading...</div>
+        <div class="user-id" id="userIdDisplay">👤 Загрузка...</div>
     </div>
 
     <script>
-        // ===== АВТОМАТИЧЕСКИ ПОЛУЧАЕМ USER_ID ИЗ TELEGRAM =====
+        // ===== АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ USER_ID =====
         let USER_ID = null;
-        
-        // Пытаемся получить ID из Telegram WebApp
+        let MODE = 'unknown';
+
+        // ПЫТАЕМСЯ ПОЛУЧИТЬ ID ИЗ TELEGRAM (Mini App)
         try {
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
-                USER_ID = tg.initDataUnsafe?.user?.id || null;
-                console.log('✅ ID получен из Telegram:', USER_ID);
+                const userData = tg.initDataUnsafe?.user;
+                if (userData && userData.id) {
+                    USER_ID = userData.id;
+                    MODE = 'telegram';
+                    console.log('✅ ID получен из Telegram:', USER_ID);
+                }
             }
         } catch (e) {
-            console.log('⚠️ Не удалось получить ID из Telegram:', e);
+            console.log('⚠️ Telegram WebApp не доступен:', e);
         }
 
-        // Если не получилось через Telegram - используем тестовый ID
+        // ЕСЛИ НЕ ПОЛУЧИЛОСЬ — ПЫТАЕМСЯ ВЗЯТЬ ИЗ URL (для тестов в браузере)
         if (!USER_ID) {
-            // Для тестирования вне Telegram (например, в браузере)
-            // ⚠️ Если сайт открыт в браузере, используем захардкоженный ID
-            USER_ID = 123456789;  // ЗАМЕНИ НА СВОЙ ID ДЛЯ ТЕСТОВ В БРАУЗЕРЕ
-            console.log('⚠️ Использую тестовый ID:', USER_ID);
-            document.getElementById('userIdDisplay').textContent = '⚠️ Тестовый режим (вне Telegram)';
-        } else {
-            document.getElementById('userIdDisplay').textContent = `👤 User ID: ${USER_ID}`;
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlId = urlParams.get('user_id');
+            if (urlId && !isNaN(urlId)) {
+                USER_ID = parseInt(urlId);
+                MODE = 'url';
+                console.log('✅ ID получен из URL:', USER_ID);
+            }
         }
+
+        // ЕСЛИ ВСЁ ЕЩЁ НЕТ — ИСПОЛЬЗУЕМ ID ИЗ localStorage (сохраняется после первого ввода)
+        if (!USER_ID) {
+            const savedId = localStorage.getItem('larpwallet_user_id');
+            if (savedId && !isNaN(savedId)) {
+                USER_ID = parseInt(savedId);
+                MODE = 'saved';
+                console.log('✅ ID загружен из localStorage:', USER_ID);
+            }
+        }
+
+        // ЕСЛИ НИЧЕГО НЕ НАШЛИ — ПРЕДЛАГАЕМ ВВЕСТИ ВРУЧНУЮ (для браузера)
+        if (!USER_ID) {
+            MODE = 'prompt';
+            const inputId = prompt(
+                '👤 Введите ваш Telegram ID\n\n' +
+                'Как узнать ID:\n' +
+                '1. Напишите @userinfobot\n' +
+                '2. Нажмите "Start"\n' +
+                '3. Скопируйте число из ответа\n\n' +
+                'Введите ID:'
+            );
+            if (inputId && !isNaN(inputId)) {
+                USER_ID = parseInt(inputId);
+                localStorage.setItem('larpwallet_user_id', USER_ID);
+                console.log('✅ ID введён вручную:', USER_ID);
+            } else {
+                // Если пользователь отменил или ввёл не число — показываем ошибку
+                document.getElementById('userIdDisplay').innerHTML = `
+                    ❌ Не удалось определить User ID<br>
+                    <small>Откройте сайт через Telegram Mini App</small>
+                `;
+                document.getElementById('userIdDisplay').style.color = '#ff4444';
+                document.getElementById('assetsList').innerHTML = `
+                    <div class="error">
+                        ❌ User ID не найден<br>
+                        <small style="color:#636366;">
+                            Чтобы использовать сайт:<br>
+                            1. Открой через Telegram Mini App<br>
+                            2. Или добавь ?user_id=ТВОЙ_ID в URL<br>
+                            3. Или обнови страницу и введи ID
+                        </small>
+                    </div>
+                `;
+                throw new Error('User ID не найден');
+            }
+        }
+
+        // ===== ПОКАЗЫВАЕМ РЕЖИМ РАБОТЫ =====
+        let modeText = '';
+        let modeClass = '';
+        if (MODE === 'telegram') {
+            modeText = '✅ Telegram Mini App';
+            modeClass = 'telegram';
+        } else if (MODE === 'url' || MODE === 'saved' || MODE === 'prompt') {
+            modeText = '🌐 Браузер (тестовый режим)';
+            modeClass = 'browser';
+        } else {
+            modeText = '⚠️ Неизвестный режим';
+            modeClass = 'error';
+        }
+
+        document.getElementById('userIdDisplay').innerHTML = `
+            👤 User ID: ${USER_ID}
+            <br>
+            <span class="mode-badge ${modeClass}">${modeText}</span>
+        `;
 
         // ===== ЗАГРУЗКА ДАННЫХ =====
         async function loadData() {
+            const assetsList = document.getElementById('assetsList');
+            assetsList.innerHTML = '<div class="loading">⏳ Загрузка...</div>';
+
             try {
                 const response = await fetch(`/api/balance/${USER_ID}`);
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    if (response.status === 404) {
+                        throw new Error('Пользователь не найден. Запустите бота /start');
+                    }
+                    throw new Error(`Ошибка сервера: ${response.status}`);
                 }
+                
                 const data = await response.json();
                 
-                if (data.error) {
-                    throw new Error(data.error);
+                if (!data.assets || data.assets.length === 0) {
+                    assetsList.innerHTML = `
+                        <div class="loading">
+                            📭 Нет активов<br>
+                            <small style="color:#636366;">Запустите бота командой /start</small>
+                        </div>
+                    `;
+                    document.getElementById('total').textContent = '$0.00 USD';
+                    document.getElementById('usdt').textContent = '≈ 0.00 USDT';
+                    return;
                 }
+
+                // Обновляем баланс
+                const totalEl = document.getElementById('total');
+                totalEl.innerHTML = `$${data.total_usd.toFixed(2)} <span class="currency">USD</span>`;
+                totalEl.style.animation = 'none';
+                setTimeout(() => { totalEl.style.animation = 'bounceIn 0.6s ease-out'; }, 10);
                 
-                document.getElementById('total').textContent = `$${data.total_usd.toFixed(2)} USD`;
                 document.getElementById('usdt').textContent = `≈ ${data.total_usd.toFixed(2)} USDT`;
                 
+                // Рендерим активы
                 let html = '';
-                if (data.assets && data.assets.length > 0) {
-                    data.assets.forEach(a => {
-                        const value = (a.balance * a.price).toFixed(2);
-                        html += `
-                            <div class="asset-item">
-                                <div class="left">
-                                    <div class="icon">${a.icon}</div>
-                                    <div>
-                                        <div class="name">${a.name}</div>
-                                        <div class="symbol">${a.symbol}</div>
-                                        <div class="address">${a.address}</div>
-                                    </div>
-                                </div>
-                                <div class="right">
-                                    <div class="balance">${a.balance} ${a.symbol}</div>
-                                    <div class="value">$${value}</div>
+                data.assets.forEach((a, index) => {
+                    const value = (a.balance * a.price).toFixed(2);
+                    const iconClass = a.symbol.toLowerCase();
+                    const delay = (index * 0.05) + 0.1;
+                    html += `
+                        <div class="asset-item" style="animation-delay: ${delay}s;">
+                            <div class="left">
+                                <div class="icon ${iconClass}">${a.icon}</div>
+                                <div>
+                                    <div class="name">${a.name}</div>
+                                    <div class="symbol">${a.symbol}</div>
+                                    <div class="address">${a.address}</div>
                                 </div>
                             </div>
-                        `;
-                    });
-                } else {
-                    html = '<div class="loading">No assets found. Please start the bot first.</div>';
-                }
-                document.getElementById('assetsList').innerHTML = html;
+                            <div class="right">
+                                <div class="balance">${a.balance} ${a.symbol}</div>
+                                <div class="value">$${value}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                assetsList.innerHTML = html;
                 
             } catch (error) {
-                console.error('Error loading data:', error);
-                document.getElementById('assetsList').innerHTML = `
+                console.error('Ошибка загрузки:', error);
+                assetsList.innerHTML = `
                     <div class="error">
-                        ❌ Error loading data<br>
+                        ❌ Ошибка загрузки<br>
                         <small style="color:#636366;">${error.message}</small>
                     </div>
                 `;
             }
         }
 
-        // Загружаем данные при открытии страницы
-        loadData();
-        
-        // Обновляем каждые 30 секунд
-        setInterval(loadData, 30000);
+        // ===== ЗАПУСК =====
+        if (USER_ID) {
+            loadData();
+            setInterval(loadData, 30000);
+        }
     </script>
 </body>
 </html>
